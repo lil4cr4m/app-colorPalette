@@ -1,0 +1,56 @@
+
+
+--------------- MVP ---------------
+User Upload
+Random Image Fetch 
+Color Count
+5 Comp,4 Props,2 State,2 Routes,1 Lifting State
+--------------- --------------- ---------------
+
+color-palette-generator
+    Main.jsx
+    App.jsx
+
+    components
+        Home.jsx
+        ImageUpload.jsx
+        PaletteGenerator.jsx
+        ColorExtractor.jsx
+        Headerjsx
+        PaletteDisplay.jsx
+        ColorSquare.jsx
+
+
+--------------- user upload ---------------
+// User selects file -> GeneratorPage updates imageSrc state 
+// -> handleGenerate processes it.
+
+ImageUpload -> PaletteGenerator -> ColorExtractor
+--------------- --------------- ---------------
+
+
+--------------- random image ---------------
+// User clicks "Random" -> api.js fetches URL 
+// -> GeneratorPage sets imageSrc -> handleGenerate processes it.
+
+PaletteGenerator -> API -> ColorExtractor
+--------------- --------------- ---------------
+
+
+--------------- display results ---------------
+// GeneratorPage calls setPalette (Lifting State) 
+// -> PaletteDisplay receives new palette prop -> Renders colors.
+
+PaletteGenerator -> PaletteDisplay -> ColorSquare
+--------------- --------------- ---------------
+
+
+1. install colorthief
+2. find the drag and drop package 
+3. define MVP
+4. define the file structure 
+
+
+Packages used: 
+- colorthief
+- unsplashAPI
