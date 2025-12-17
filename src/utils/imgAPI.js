@@ -8,10 +8,6 @@ const BASE_URL = "https://api.unsplash.com/";
 // The basic endpoint for a random photo
 const RANDOM_ENDPOINT = `${BASE_URL}photos/random`;
 
-/**
- * Fetches a random image URL from the Unsplash API.
- * @returns {Promise<string|null>} The URL of a high-quality image, or null on error.
- */
 export async function fetchRandomImage() {
   // 1. Construct the URL with required parameters
   const params = new URLSearchParams({

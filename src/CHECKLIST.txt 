@@ -45,12 +45,18 @@ PaletteGenerator -> PaletteDisplay -> ColorSquare
 --------------- --------------- ---------------
 
 
+--------------- to-do list ---------------
+
 1. install colorthief
 2. find the drag and drop package 
 3. define MVP
 4. define the file structure 
+5. install airtable
 
 
 Packages used: 
 - colorthief
 - unsplashAPI
+
+
+

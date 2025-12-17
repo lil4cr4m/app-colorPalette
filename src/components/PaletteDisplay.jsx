@@ -1,19 +1,46 @@
-// Create the component to receive the palette array prop & render a list of ColorSquares.
-
 import React from "react";
-import ColorSquare from "./ColorSquare";
+import "../styles/PaletteDisplay.css";
 
-// The Output. Displays the generated colors.
-// Renders multiple ColorSquare components.
-
-function PaletteDisplay({ palette }) {
+const PaletteDisplay = ({ imageUrl, palette, isLoading }) => {
+  if (isLoading) {
+    return (
+      <div className="loading-message">Analysing image... Please wait.</div>
+    );
+  }
+  if (!imageUrl && palette.length === 0) {
+    return (
+      <div className="initial-message">Ready to create your first palette</div>
+    );
+  }
   return (
-    <div>
-      {palette.map((color, index) => (
-        <ColorSquare key={index} colorHex={color} /> // Passes Prop 1/4
-      ))}
+    <div className="palette-container">
+      {/* Display Image */}
+      {imageUrl && (
+        <div>
+          <img src={imageUrl} alt="Image source for color palette" />
+        </div>
+      )}
+
+      {/* Display Palette */}
+      {palette.length > 0 && (
+        <div className="color-palette">
+          {palette.map((hexCode, index) => (
+            // Color Card
+            <div
+              key={index}
+              className="color-card"
+              style={{ backgroundColor: hexCode }}
+              // Copy color on click
+              onClick={() => navigator.clipboard.writeText(hexCode)}
+            >
+              <span className="hex-code">{hexCode}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {palette.length > 0 && <button className="save-button">Save</button>}
     </div>
   );
-}
+};
 
 export default PaletteDisplay;

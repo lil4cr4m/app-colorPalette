@@ -1,36 +1,21 @@
-import React, { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
-import Home from "./components/Home";
-import PaletteGenerator from "./components/PaletteGenerator";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import GeneratorPage from "./pages/GeneratorPage";
+import FavoritesPage from "./pages/FavoritesPage";
 
-// Manage routing and holds the master state (palette)
-// via useState and provides the Lifting State mechanism.
-
-function App() {
-  // useState 1/2: Holds the final palette data.
-  const [palette, setPalette] = useState([]);
-
+const App = () => {
   return (
-    <BrowserRouter>
-      <Header />
+    <Router>
+      <Navbar />
       <div className="container">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/generate"
-            element={
-              // **LIFTING STATE:** setPalette is passed down as a prop.
-              <PaletteGenerator
-                setAppPalette={setPalette}
-                currentPalette={palette}
-              />
-            }
-          />
+          <Route path="/" element={<GeneratorPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </Router>
   );
-}
+};
 
 export default App;
