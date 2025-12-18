@@ -23,6 +23,10 @@ const FavoritesPage = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
   const startEditing = (id, currentName) => {
     setEditingId(id);
     setEditValue(currentName);
@@ -65,7 +69,6 @@ const FavoritesPage = () => {
       });
 
       if (res.ok) {
-        // 2. Use the correct state setter: setSavedItems
         setSavedItems((prev) => prev.filter((item) => item.id !== id));
       } else {
         const errorData = await res.json();
@@ -75,10 +78,6 @@ const FavoritesPage = () => {
       console.error("Network Error:", err);
     }
   };
-
-  useEffect(() => {
-    fetchItems();
-  }, []);
 
   if (loading) return <div className="page-container">Loading...</div>;
 

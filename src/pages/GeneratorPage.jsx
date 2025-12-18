@@ -17,31 +17,30 @@ const GeneratorPage = () => {
 
   // 2. EXTRACTION LOGIC
   const handleExtract = (url) => {
-    if (!url) return;
-    setActiveImage(url);
+    if (!url) return; // Guard clause: exit if no URL
+    setActiveImage(url); // Set the image to display
 
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.src = url;
+    const img = new Image(); // Create invisible image element
+    img.crossOrigin = "Anonymous"; // Allows cross-origin image processing
+    img.src = url; // Load the image
 
     img.onload = () => {
-      const thief = new ColorThief();
-      const rgbPalette = thief.getPalette(img, 5);
-
+      // When image fully loads
+      const thief = new ColorThief(); // Create color extractor instance
+      const rgbPalette = thief.getPalette(img, 5); // Get 5 RGB colors
       // Convert RGB to Hex
       const hexPalette = rgbPalette.map(
         (rgb) => "#" + rgb.map((x) => x.toString(16).padStart(2, "0")).join("")
       );
-
-      setActivePalette(hexPalette);
+      setActivePalette(hexPalette); // Update state with hex colors
     };
   };
 
-  // 3. GET FAVORITES
+  // 3. SAVE TO AIRTABLE
   const handleSave = async () => {
     const data = {
       fields: {
-        Name: paletteName || "Untitled",
+        Name: paletteName || "Untitled", // Use custom name or default
         ImageURL: activeImage,
         Color1: activePalette[0],
         Color2: activePalette[1],
@@ -52,16 +51,17 @@ const GeneratorPage = () => {
     };
 
     await fetch(AIRTABLE_URL, {
-      method: "POST",
+      method: "POST", // Create new record
       headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${TOKEN}`, // API authentication
+        "Content-Type": "application/json", // Data format
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data), // Convert object to JSON string
     });
 
-    alert("Palette Captured.");
-    setPaletteName(""); // Reset palette name
+    alert("Palette saved.");
+
+    setPaletteName(""); // Reset palette name input
   };
 
   return (

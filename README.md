@@ -57,6 +57,59 @@ Your Airtable Base should be structured with the following fields:
 **Component Hierarchy**
 
 ```text
+App.jsx (Root Component)
+├── Router (BrowserRouter)
+│   ├── Navbar.jsx (Persistent Navigation)
+│   └── main.page-container (Layout Wrapper)
+│       ├── Routes
+│       │   ├── Route path="/" → GeneratorPage.jsx
+│       │   └── Route path="/favorites" → FavoritesPage.jsx
+│       └── Content Area
+```
+
+**Root Directory Structure**
+
+```text
+color-palette-app/
+├── 📂 src/                       # Source code
+│   ├── 📂 components/           # Reusable UI components
+│   │   ├── Navbar.jsx           # Navigation bar
+│   │   ├── PaletteDisplay.jsx   # Image + palette display
+│   │   ├── ImageInputForm.jsx   # URL input form
+│   │   ├── ColorBox.jsx         # Single color display (future)
+│   │   └── LoadingSpinner.jsx   # Loading indicator (future)
+│   ├── 📂 pages/                # Full page components
+│   │   ├── GeneratorPage.jsx    # Main extraction page
+│   │   └── FavoritesPage.jsx    # Saved palettes page
+│   ├── 📂 styles/               # CSS/SCSS files
+│   │   ├── GeneratorPage.css    # Page-specific styles
+│   │   ├── FavoritesPage.css    # Page-specific styles
+│   │   ├── Navbar.css           # Component styles
+│   │   ├── PaletteDisplay.css   # Component styles
+│   ├── 📂 contexts/             # React contexts (future)
+│   │   └── ThemeContext.jsx     # Dark/light mode
+│   ├── App.jsx                  # Main app component
+│   ├── main.jsx                 # App entry point
+│   └── index.css                # Global CSS reset
+├── .env                         # Environment variables (local)
+├── .env.example                 # Environment template
+├── .gitignore                   # Git ignored files
+├── package.json                 # Dependencies & scripts
+├── vite.config.js              # Build configuration
+├── README.md                   # Project documentation
+└── package-lock.json           # Dependency lock file
+```
+
+```text
+App.jsx (Parent / Router)
+├── Navbar.jsx (Navigation links)
+├── GeneratorPage.jsx (State: imageUrl, colors)
+│   └── PaletteDisplay.jsx (Renders: Image + ColorStrip)
+└── FavoritesPage.jsx (State: savedItems)
+    └── (Renders: Grid of saved Palette Cards)
+```
+
+```text
 App.jsx (Parent / Router)
 ├── Navbar.jsx (Navigation links)
 ├── GeneratorPage.jsx (State: imageUrl, colors)
