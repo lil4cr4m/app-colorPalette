@@ -5,10 +5,18 @@ import "../styles/Navbar.css";
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <h1>Color Picker</h1>
-      <div className="nav-links">
-        <Link to="/">Generate</Link>
-        <Link to="/favorites">Favorites</Link>
+      <Link to="/" className="logo">
+        COLORPALETTE
+      </Link>
+
+      {/* NAVIGATION LINKS */}
+      <div className="links">
+        <Link to="/" className="nav-link">
+          Generator
+        </Link>
+        <Link to="/favorites" className="nav-link">
+          Favorites
+        </Link>
       </div>
     </nav>
   );

@@ -1,0 +1,115 @@
+/* THE GRID */
+.grid-view {
+  display: grid;
+  /* 210px allows 5 columns to fit within 1200px including gaps */
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+
+  /* Vertical gap of 80px, horizontal gap of 20px */
+  gap: 40px 20px;
+
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 0;
+  box-sizing: border-box;
+}
+
+/* THE INDIVIDUAL CARD */
+.fav-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+/* THE HEADER  */
+.fav-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 6px;
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #121212;
+}
+
+/* THE IMAGE  */
+.fav-img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+}
+
+/* THE STRIP  */
+.fav-strip {
+  display: flex;
+  height: 40px;
+  width: 100%;
+}
+
+.fav-color {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* HEX CODES - Hidden until interaction */
+.hex-label {
+  font-size: 9px;
+  font-family: "Monaco", monospace;
+  letter-spacing: 0;
+  mix-blend-mode: difference;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.fav-card:hover .hex-label {
+  opacity: 0.8;
+}
+
+/* EDITABLE NAME */
+.editable-name {
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: opacity 0.2s ease;
+}
+
+.editable-name:hover {
+  opacity: 0.5;
+}
+
+/* INLINE INPUT */
+.inline-edit-input {
+  border: none;
+  border-bottom: 1px solid #121212;
+  outline: none;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  background: transparent;
+  width: 100%;
+}
+
+/* DELETE BUTTON  */
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ccc;
+  font-size: 14px;
+  font-weight: 100;
+  padding: 0;
+  transition: color 0.3s ease;
+}
+
+.delete-btn:hover {
+  color: #ff4444; /* Only color pop in the UI */
+}

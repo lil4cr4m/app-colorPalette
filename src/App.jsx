@@ -7,13 +7,15 @@ import FavoritesPage from "./pages/FavoritesPage";
 const App = () => {
   return (
     <Router>
+      {/* Navbar stays visible on every page */}
       <Navbar />
-      <div className="container">
+
+      <main className="page-container">
         <Routes>
           <Route path="/" element={<GeneratorPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
         </Routes>
-      </div>
+      </main>
     </Router>
   );
 };

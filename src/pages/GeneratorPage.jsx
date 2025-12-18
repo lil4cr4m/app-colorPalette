@@ -1,87 +1,114 @@
 import React, { useState } from "react";
-import ImageInputForm from "../components/ImageInputForm";
-import PaletteDisplay from "../components/PaletteDisplay";
 import ColorThief from "colorthief";
+import "../styles/GeneratorPage.css";
 
-const colorThief = new ColorThief();
+// Database Config
+const TOKEN = import.meta.env.VITE_AIRTABLE_TOKEN;
+const BASE_ID = import.meta.env.VITE_AIRTABLE_BASE_ID;
+const TABLE = import.meta.env.VITE_AIRTABLE_TABLE_NAME;
+const AIRTABLE_URL = `https://api.airtable.com/v0/${BASE_ID}/${TABLE}`;
 
 const GeneratorPage = () => {
-  const [imageUrl, setImageUrl] = useState("");
-  const [palette, setPalette] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // 1. STATES
+  const [typedUrl, setTypedUrl] = useState(""); // What is currently in the input
+  const [activeImage, setActiveImage] = useState(""); // The image being displayed
+  const [activePalette, setActivePalette] = useState([]); // The 5 colors extracted
+  const [paletteName, setPaletteName] = useState(""); // The name for saving
 
-  const handleGeneratePalette = (url) => {
+  // 2. EXTRACTION LOGIC
+  const handleExtract = (url) => {
     if (!url) return;
-    setIsLoading(true);
-    setError(null);
-    setImageUrl(url);
+    setActiveImage(url);
 
-    // 1. Create new Image object
     const img = new Image();
     img.crossOrigin = "Anonymous";
+    img.src = url;
 
-    // SUCCESS
     img.onload = () => {
-      try {
-        // 2. Use colorthief to get palette (5 colors)
-        const colorArray = colorThief.getPalette(img, 5);
-        // 3. Convert RGB (default) array to HEX codes for easier use in CSS
-        const hexPalette = colorArray.map((rgb) => rgbToHex(rgb));
-        setPalette(hexPalette);
-      } catch (error) {
-        console.error("An error occured:", error);
-        setError(
-          "Failed to extract colors. Check the image URL, ensure it supports CORS or try a different image."
-        );
-        // 4. Clear palette if error thrown
-        setPalette([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      const thief = new ColorThief();
+      const rgbPalette = thief.getPalette(img, 5);
 
-    // FAILURE
-    img.onerror = () => {
-      setIsLoading(false);
-      setPalette([]);
-      setError(
-        "Failed to extract colors. Check the image URL, ensure it supports CORS or try a different image."
+      // Convert RGB to Hex
+      const hexPalette = rgbPalette.map(
+        (rgb) => "#" + rgb.map((x) => x.toString(16).padStart(2, "0")).join("")
       );
-    };
 
-    // TRIGGER IMAGE DOWNLOAD
-    img.src = imageUrl;
+      setActivePalette(hexPalette);
+    };
   };
 
-  // Helper function to convert RGB array to HEX string
-  const rgbToHex = ([r, g, b]) =>
-    "#" +
-    [r, g, b]
-      .map((x) => {
-        const hex = x.toString(16);
-        return hex.length === 1 ? "0" + hex : hex;
-      })
-      .join("");
+  // 3. GET FAVORITES
+  const handleSave = async () => {
+    const data = {
+      fields: {
+        Name: paletteName || "Untitled",
+        ImageURL: activeImage,
+        Color1: activePalette[0],
+        Color2: activePalette[1],
+        Color3: activePalette[2],
+        Color4: activePalette[3],
+        Color5: activePalette[4],
+      },
+    };
+
+    await fetch(AIRTABLE_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    alert("Palette Captured.");
+    setPaletteName(""); // Reset palette name
+  };
 
   return (
-    <>
-      <h2>Create a Palette</h2>
-      <p>Paste an image URL below and click 'Generate' to extract colors.</p>
-      <div className="generator-container">
-        {/* 1. Pass the generator function down to the input component */}
-        <ImageInputForm
-          onGenerate={handleGeneratePalette}
-          isLoading={isLoading}
+    <div className="page-container">
+      {/* INPUT LINE */}
+      <div className="input-group">
+        <input
+          placeholder="Paste Image URL"
+          value={typedUrl}
+          onChange={(e) => setTypedUrl(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleExtract(typedUrl)}
         />
-        {/* 2. Pass the generated data down to the display component */}
-        <PaletteDisplay
-          imageUrl={imageUrl}
-          palette={palette}
-          isLoading={isLoading}
-        />
+        <button className="text-btn" onClick={() => handleExtract(typedUrl)}>
+          Generate
+        </button>
       </div>
-    </>
+
+      {/* RESULT DISPLAY */}
+      {activeImage && activePalette.length > 0 && (
+        <div className="result-card">
+          <img src={activeImage} alt="Source" className="main-image" />
+
+          <div className="palette-strip">
+            {activePalette.map((hex, i) => (
+              <div
+                key={i}
+                className="color-box"
+                style={{ backgroundColor: hex }}
+              >
+                <span className="hex-label">{hex}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="save-row">
+            <input
+              placeholder="Palette"
+              value={paletteName}
+              onChange={(e) => setPaletteName(e.target.value)}
+            />
+            <button className="text-btn" onClick={handleSave}>
+              Save
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

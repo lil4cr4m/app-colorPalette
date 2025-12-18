@@ -1,28 +1,30 @@
 import React, { useState } from "react";
 
 const ImageInputForm = ({ onGenerate, isLoading }) => {
-  const [input, setInput] = useState("");
+  const [text, setText] = useState("");
+
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    onGenerate(input);
+    e.preventDefault(); // Prevents the page from refreshing
+    if (text.trim()) {
+      onGenerate(text); // Sends the URL back up to the GeneratorPage
+    }
   };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="input-form">
-        <input
-          type="url"
-          placeholder="Paste image URL here"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={isLoading}
-          required
-        />
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Generating..." : "Generate Palette"}
-        </button>
-      </form>
-    </div>
+    <form className="input-form" onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Paste image URL here..."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        disabled={isLoading} // Stop typing while it's busy
+      />
+
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? "Processing..." : "Create"}
+      </button>
+    </form>
   );
 };
 
