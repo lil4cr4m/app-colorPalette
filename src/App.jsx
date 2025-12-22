@@ -1,22 +1,39 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import GeneratorPage from "./pages/GeneratorPage";
+import HomePage from "./pages/HomePage";
 import FavoritesPage from "./pages/FavoritesPage";
+import "./styles/index.css";
 
 const App = () => {
-  return (
-    <Router>
-      {/* Navbar stays visible on every page */}
-      <Navbar />
+  const [savedPalettes, setSavedPalettes] = useState([]);
 
+  return (
+    <BrowserRouter>
+      <Navbar />
       <main className="page-container">
         <Routes>
-          <Route path="/" element={<GeneratorPage />} />
-          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route
+            path="/"
+            element={
+              <HomePage
+                savedPalettes={savedPalettes}
+                setSavedPalettes={setSavedPalettes}
+              />
+            }
+          />
+          <Route
+            path="/favorites"
+            element={
+              <FavoritesPage
+                savedPalettes={savedPalettes}
+                setSavedPalettes={setSavedPalettes}
+              />
+            }
+          />
         </Routes>
       </main>
-    </Router>
+    </BrowserRouter>
   );
 };
 

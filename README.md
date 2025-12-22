@@ -1,125 +1,189 @@
-# Color Palette
+# ColorPalette Generator
 
-![ Image of generator page ](src/assets/colorpalette_generatorpage.png)
-![Image of favorites page ](src/assets/colorpalette_favoritespage.png)
+A clean, minimalist web application that extracts color palettes from images and allows you to save your favorite combinations. Built with React and integrated with Airtable for persistent storage.
 
-A minimalist tool for designers to extract and manage aesthetic color schemes from images.
+## Features
 
-## Description
+- Image Palette Extraction: Extract 5-color palettes from any image URL
+- ColorThief Integration: Uses the ColorThief library for accurate color detection
+- Save to Airtable: Persistent storage of your favorite palettes
+- Favorite Management: View, edit, and delete saved palettes
+- Clean UI: Minimalist design with smooth animations
+- Responsive Design: Works on desktop, tablet, and mobile devices
 
-Color Palette Generator is a React application that leverages the **ColorThief** algorithm to pull dominant colors from any image URL. It features a minimalist UI, allowing users to curate a personal collection of color palettes stored in a persistent **Airtable** database.
+## Tech Stack
 
-## MVP
+- Frontend: React 18 + Vite
+- Routing: React Router DOM
+- State Management: React Query + React State
+- Color Extraction: ColorThief
+- Backend Integration: Airtable API
+- Styling: CSS with CSS Modules
+- Build Tool: Vite
 
-- **Generate:** As a user, I can paste an image URL to extract 5 distinct colors.
-- **Save:** As a user, I can name and save palettes to my collection.
-- **Manage:** As a user, I can view, rename, and delete saved palettes on a dedicated Favorites page.
-- **Responsive:** As a user, the layout adapts to my screen size, fitting up to 5 palettes per row.
+## Project Structure
+
+```txt
+src/
+├── components/
+│   ├── Navbar.jsx           # Navigation component
+│   ├── ImageInputForm.jsx   # URL input form
+│   ├── PaletteDisplay.jsx   # Main palette display
+│   ├── PaletteCard.jsx      # Saved palette card
+│   └── SaveForm.jsx         # Save palette form
+├── pages/
+│   ├── HomePage.jsx         # Generator page
+│   └── FavoritesPage.jsx    # Saved palettes page
+├── services/
+│   └── airtable.js          # Airtable API service
+├── styles/
+│   ├── index.css           # Global/base styles
+│   ├── App.css             # App-specific styles
+│   ├── Navbar.css          # Navigation styles
+│   ├── HomePage.css        # Generator page styles
+│   ├── FavoritesPage.css   # Favorites page styles
+│   ├── PaletteCard.css     # Palette card styles
+│   ├── ImageInputForm.css  # Input form styles
+│   ├── PaletteDisplay.css  # Palette display styles
+│   └── SaveForm.css        # Save form styles
+├── App.jsx                 # Main app component
+└── main.jsx               # Application entry point
+
+```
 
 ---
 
-## Technologies Used
+## Getting Started
 
-- **Frontend:** React.js, HTML5, CSS3 (Custom Studio Minimalist Design)
-- **Backend/Database:** Airtable API
-- **API Testing:** Bruno
-- **Libraries:**
-  - `colorthief`: For image color extraction
-  - `react-router-dom`: For client-side navigation
+**Prerequisites**
+
+- Node.js 16+ and npm
+- An Airtable account
+- Airtable base with the following table structure:
+
+```txt
+1. Create a new Airtable base
+2. Create a table named "Palettes" with these fields:
+    - name (Single line text)
+    - imageUrl (Single line text)
+    - color1 (Single line text)
+    - color2 (Single line text)
+    - color3 (Single line text)
+    - color4 (Single line text)
+    - color5 (Single line text)
+3. Get your API credentials:
+4. API Token: From your Airtable account settings
+5. Base ID: From your Airtable base URL
+6. Table Name: ColorPalettes
+```
+
+**Installation**
+Clone the repository:
+
+```bash
+git clone <repository-url>
+cd colorpalette-app
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create environment file:
+
+```bash
+cp .env.example .env
+```
+
+Configure environment variables in .env:
+
+```env
+VITE_AIRTABLE_TOKEN=your_token_here
+VITE_AIRTABLE_BASE_ID=your_base_id_here
+VITE_AIRTABLE_TABLE_NAME=Palettes
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open your browser and navigate to:
+
+```text
+http://localhost:3000
+```
+
+## How to Use
+
+1. Generate a Palette
+
+   - Navigate to the Generator page
+   - Paste an image URL into the input field
+   - Click "Generate"
+   - View the extracted 5-color palette
+
+2. Save a Palette
+
+   - After generating a palette
+   - Optionally give it a name
+   - Click "Save"
+   - The palette will be saved to your Airtable base
+
+3. Manage Favorites
+   - Click "Favorites" in the navigation
+   - View all saved palettes
+   - Click palette names to edit them
+   - Click the "×" button to delete palettes
 
 ---
 
-## Environment Variables
+## API Reference
 
-To run this project, you will need to add the following variables to your `.env` file:
+### Airtable Service (airtable.js)
 
-```text
-VITE_AIRTABLE_TOKEN=your_personal_access_token
-VITE_AIRTABLE_BASE_ID=your_base_id
-VITE_AIRTABLE_TABLE_NAME=your_table_name
+_fetchAllPalettes()_
+
+```Javascript
+// Returns: Array of palette records
+const palettes = await fetchAllPalettes();
 ```
 
-## Airtable Columns
+_savePalette({ name, imageUrl, colors })_
 
-Your Airtable Base should be structured with the following fields:
-| Column Name | Type | Description |
-| ------------- | ---------- | ---------- |
-| Name | Single line text | The name given to the palette |
-| ImageURL | URL | The source URL of the image |  
-| Color1 | Single line text | Hex code for color 1 |
-| Color2 | Single line text | Hex code for color 2 |
-| Color3 | Single line text | Hex code for color 3 |
-| Color4 | Single line text | Hex code for color 4 |
-| Color5 | Single line text | Hex code for color 5 |
+```Javascript
+// Parameters:
+// - name: string (optional)
+// - imageUrl: string (required)
+// - colors: Array<string> (5 hex colors)
 
-## Component Tree
-
-**Component Hierarchy**
-
-```text
-App.jsx (Root Component)
-├── Router (BrowserRouter)
-│   ├── Navbar.jsx (Persistent Navigation)
-│   └── main.page-container (Layout Wrapper)
-│       ├── Routes
-│       │   ├── Route path="/" → GeneratorPage.jsx
-│       │   └── Route path="/favorites" → FavoritesPage.jsx
-│       └── Content Area
+const result = await savePalette({
+  name: "Sunset Colors",
+  imageUrl: "https://example.com/image.jpg",
+  colors: ["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33F3"]
+});
 ```
 
-**Root Directory Structure**
+_deletePalette(id)_
 
-```text
-color-palette-app/
-├── 📂 src/                       # Source code
-│   ├── 📂 components/           # Reusable UI components
-│   │   ├── Navbar.jsx           # Navigation bar
-│   │   ├── PaletteDisplay.jsx   # Image + palette display
-│   │   ├── ImageInputForm.jsx   # URL input form
-│   │   ├── ColorBox.jsx         # Single color display (future)
-│   │   └── LoadingSpinner.jsx   # Loading indicator (future)
-│   ├── 📂 pages/                # Full page components
-│   │   ├── GeneratorPage.jsx    # Main extraction page
-│   │   └── FavoritesPage.jsx    # Saved palettes page
-│   ├── 📂 styles/               # CSS/SCSS files
-│   │   ├── GeneratorPage.css    # Page-specific styles
-│   │   ├── FavoritesPage.css    # Page-specific styles
-│   │   ├── Navbar.css           # Component styles
-│   │   ├── PaletteDisplay.css   # Component styles
-│   ├── 📂 contexts/             # React contexts (future)
-│   │   └── ThemeContext.jsx     # Dark/light mode
-│   ├── App.jsx                  # Main app component
-│   ├── main.jsx                 # App entry point
-│   └── index.css                # Global CSS reset
-├── .env                         # Environment variables (local)
-├── .env.example                 # Environment template
-├── .gitignore                   # Git ignored files
-├── package.json                 # Dependencies & scripts
-├── vite.config.js              # Build configuration
-├── README.md                   # Project documentation
-└── package-lock.json           # Dependency lock file
+```Javascript
+// Deletes a palette
+await deletePalette("rec123");
 ```
 
-```text
-App.jsx (Parent / Router)
-├── Navbar.jsx (Navigation links)
-├── GeneratorPage.jsx (State: imageUrl, colors)
-│   └── PaletteDisplay.jsx (Renders: Image + ColorStrip)
-└── FavoritesPage.jsx (State: savedItems)
-    └── (Renders: Grid of saved Palette Cards)
-```
+### Color Extraction Details
 
-```text
-App.jsx (Parent / Router)
-├── Navbar.jsx (Navigation links)
-├── GeneratorPage.jsx (State: imageUrl, colors)
-│   └── PaletteDisplay.jsx (Renders: Image + ColorStrip)
-└── FavoritesPage.jsx (State: savedItems)
-    └── (Renders: Grid of saved Palette Cards)
-```
+The app uses the ColorThief library to extract dominant colors from images:
 
-**Routing**
-| Path | Component | Description |
-| ------------- | ---------- | ---------- |
-| / | GeneratorPage | Home/Generator Page |
-| /favorites | FavoritesPage | Saved Palettes Gallery |
+- Loads the image from the provided URL
+- Analyzes the image to find the 5 most dominant colors
+- Converts RGB values to hex codes
+- Displays the palette in a clean, visual format
+- \*Note: Images must be CORS-enabled to work properly.
+
+---
+
+Made with \<3 by Clara

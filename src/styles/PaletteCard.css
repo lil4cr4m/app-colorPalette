@@ -1,0 +1,111 @@
+.palette-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border);
+}
+
+.palette-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--shadow-hover);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background-color: white;
+}
+
+.editable-title {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  flex-grow: 1;
+  font-weight: 500;
+}
+
+.editable-title:hover {
+  background-color: rgba(44, 62, 80, 0.05);
+}
+
+.edit-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  font-size: 1rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  line-height: 1;
+  transition: all 0.2s;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.delete-btn:hover {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--error);
+}
+
+.palette-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.color-strip {
+  display: flex;
+  height: 50px;
+}
+
+.color-box {
+  flex: 1;
+  position: relative;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.color-box:hover {
+  transform: scale(1.1);
+  z-index: 1;
+  box-shadow: 0 0 0 2px white;
+}
+
+.color-hex {
+  position: absolute;
+  bottom: 0.25rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.2s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.color-box:hover .color-hex {
+  opacity: 1;
+}

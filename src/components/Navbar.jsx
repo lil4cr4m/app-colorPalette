@@ -8,11 +8,9 @@ const Navbar = () => {
       <Link to="/" className="logo">
         COLORPALETTE
       </Link>
-
-      {/* NAVIGATION LINKS */}
       <div className="links">
         <Link to="/" className="nav-link">
-          Generator
+          Generate A Palette
         </Link>
         <Link to="/favorites" className="nav-link">
           Favorites

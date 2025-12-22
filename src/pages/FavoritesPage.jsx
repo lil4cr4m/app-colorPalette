@@ -1,130 +1,114 @@
 import React, { useState, useEffect } from "react";
+import PaletteCard from "../components/PaletteCard";
+import {
+  fetchAllPalettes,
+  updatePaletteName,
+  deletePalette,
+} from "../services/airtable";
 import "../styles/FavoritesPage.css";
 
-const TOKEN = import.meta.env.VITE_AIRTABLE_TOKEN;
-const BASE_ID = import.meta.env.VITE_AIRTABLE_BASE_ID;
-const TABLE = import.meta.env.VITE_AIRTABLE_TABLE_NAME;
-const AIRTABLE_URL = `https://api.airtable.com/v0/${BASE_ID}/${TABLE}`;
-
-const FavoritesPage = () => {
-  const [savedItems, setSavedItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // States to track editing
+const FavoritesPage = ({ savedPalettes, setSavedPalettes }) => {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState("");
-
-  const fetchItems = async () => {
-    const res = await fetch(AIRTABLE_URL, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-    });
-    const data = await res.json();
-    setSavedItems(data.records || []);
-    setLoading(false);
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetchItems();
+    loadPalettes();
   }, []);
 
-  const startEditing = (id, currentName) => {
-    setEditingId(id);
-    setEditValue(currentName);
+  const loadPalettes = async () => {
+    setIsLoading(true);
+    try {
+      const palettes = await fetchAllPalettes();
+      setSavedPalettes(palettes);
+    } catch (error) {
+      console.error("Failed to load palettes:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const saveUpdate = async (id) => {
-    if (!editValue.trim()) {
+  const handleUpdate = async (id, newName) => {
+    if (!newName.trim()) {
       setEditingId(null);
       return;
     }
 
-    const res = await fetch(`${AIRTABLE_URL}/${id}`, {
-      method: "PATCH", // Update only the Name field
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fields: { Name: editValue },
-      }),
-    });
+    try {
+      await updatePaletteName(id, newName);
 
-    if (res.ok) {
-      setSavedItems((prev) =>
+      // Update local state
+      setSavedPalettes((prev) =>
         prev.map((item) =>
           item.id === id
-            ? { ...item, fields: { ...item.fields, Name: editValue } }
+            ? { ...item, fields: { ...item.fields, Name: newName } }
             : item
         )
       );
       setEditingId(null);
+    } catch (error) {
+      console.error("Failed to update palette:", error);
     }
   };
 
-  const deleteItem = async (id) => {
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this palette?")) {
+      return;
+    }
+
     try {
-      const res = await fetch(`${AIRTABLE_URL}/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${TOKEN}` },
-      });
-
-      if (res.ok) {
-        setSavedItems((prev) => prev.filter((item) => item.id !== id));
-      } else {
-        const errorData = await res.json();
-        console.error("Airtable Error:", errorData);
-      }
-    } catch (err) {
-      console.error("Network Error:", err);
+      await deletePalette(id);
+      // Update local state
+      setSavedPalettes((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Failed to delete palette:", error);
+      alert("Failed to delete palette. Please try again.");
     }
   };
 
-  if (loading) return <div className="page-container">Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="page-container">
+        <h1>Favorites</h1>
+        <div className="loading-spinner">Loading palettes...</div>
+      </div>
+    );
+  }
+
+  if (!savedPalettes.length) {
+    return (
+      <div className="page-container">
+        <h1>Favorites</h1>
+        <p className="empty-message">No saved palettes yet.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="page-container grid-view">
-      {savedItems.map((item) => (
-        <div key={item.id} className="fav-card">
-          <div className="fav-header">
-            {/* Swaps between Input and Span based on state */}
-            {editingId === item.id ? (
-              <input
-                className="inline-edit-input"
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                onBlur={() => saveUpdate(item.id)} // Saves when you click away
-                onKeyDown={(e) => e.key === "Enter" && saveUpdate(item.id)} // Saves on Enter
-                autoFocus
-              />
-            ) : (
-              <span
-                className="editable-name"
-                onClick={() => startEditing(item.id, item.fields.Name)}
-              >
-                {item.fields.Name || "Untitled"}
-              </span>
-            )}
+    <div className="page-container">
+      <div className="page-header">
+        <h1>Favorites</h1>
+        <span className="count-badge">{savedPalettes.length} saved</span>
+      </div>
 
-            <button className="delete-btn" onClick={() => deleteItem(item.id)}>
-              &times;
-            </button>
-          </div>
-
-          <img src={item.fields.ImageURL} className="fav-img" alt="saved" />
-
-          <div className="fav-strip">
-            {[1, 2, 3, 4, 5].map((num) => (
-              <div
-                key={num}
-                className="fav-color"
-                style={{ backgroundColor: item.fields[`Color${num}`] }}
-              >
-                <span className="hex-label">{item.fields[`Color${num}`]}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+      <div className="grid-view">
+        {savedPalettes.map((palette) => (
+          <PaletteCard
+            key={palette.id}
+            palette={palette}
+            isEditing={editingId === palette.id}
+            editValue={editValue}
+            onEditChange={setEditValue}
+            onStartEdit={() => {
+              setEditingId(palette.id);
+              setEditValue(palette.fields.Name || "");
+            }}
+            onSaveEdit={() => handleUpdate(palette.id, editValue)}
+            onCancelEdit={() => setEditingId(null)}
+            onDelete={() => handleDelete(palette.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 };

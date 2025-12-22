@@ -2,15 +2,12 @@ import React from "react";
 import "../styles/PaletteDisplay.css";
 
 const PaletteDisplay = ({ imageUrl, palette }) => {
-  // 1. Logic: If no image is provided yet, don't show anything
-  if (!imageUrl) return null;
+  if (!imageUrl || !palette.length) return null;
 
   return (
-    <div className="preview-box">
-      {/* 2. THE IMAGE: Styled as a perfect square */}
+    <div className="palette-display">
       <img src={imageUrl} alt="Source" className="main-image" />
 
-      {/* 3. THE COLORS: A horizontal bar of 5 colors */}
       <div className="palette-bar">
         {palette.map((hex, index) => (
           <div
@@ -18,7 +15,6 @@ const PaletteDisplay = ({ imageUrl, palette }) => {
             className="color-slot"
             style={{ backgroundColor: hex }}
           >
-            {/* 4. THE HEX CODE: Centered inside the color slot */}
             <span className="hex-code">{hex}</span>
           </div>
         ))}
